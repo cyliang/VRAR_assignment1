@@ -37,7 +37,7 @@ public class PlayerScript : MonoBehaviour {
 		if (Input.GetKey (KeyCode.Space)) {
 			toStop ();
 		} else {
-			float vertical = Input.GetAxis ("Vertical") + Input.acceleration.z;
+			float vertical = Input.GetAxis ("Vertical") + Input.acceleration.y;
 			float horizontal = Input.GetAxis ("Horizontal") + Input.acceleration.x;
 
 			rb.AddForce ((
