@@ -16,10 +16,18 @@ public class CameraScript : MonoBehaviour {
 
 	void Update() {
 		if (Input.GetKey (KeyCode.Z)) {
-			angle -= 1;
+			toLookLeft ();
 		} else if (Input.GetKey (KeyCode.C)) {
-			angle += 1;
+			toLookRight ();
 		}
+	}
+
+	void toLookLeft() {
+		angle -= 1;
+	}
+
+	void toLookRight() {
+		angle += 1;
 	}
 
 	void LateUpdate () {

@@ -31,17 +31,30 @@ public class PlayerScript : MonoBehaviour {
 	}
 	
 	void FixedUpdate() {
-		if (Input.GetKeyDown (KeyCode.LeftControl) && transform.position.y < maxHeight) {
-			rb.AddForce (Vector3.up * jumpSpeed);
+		if (Input.GetKeyDown (KeyCode.LeftControl)) {
+			toJump ();
 		}
 		if (Input.GetKey (KeyCode.Space)) {
-			rb.velocity = rb.velocity * 0.95f;
+			toStop ();
 		} else {
+			float vertical = Input.GetAxis ("Vertical") + Input.acceleration.z;
+			float horizontal = Input.GetAxis ("Horizontal") + Input.acceleration.x;
+
 			rb.AddForce ((
-				direction * Input.GetAxis ("Vertical") +
-				Vector3.Cross(Vector3.up, direction) * Input.GetAxis ("Horizontal")				
+				direction * vertical +
+				Vector3.Cross(Vector3.up, direction) * horizontal
 			) * speed);
 		}
+	}
+
+	void toJump() {
+		if (transform.position.y < maxHeight) {
+			rb.AddForce (Vector3.up * jumpSpeed);
+		}
+	}
+
+	void toStop() {
+		rb.velocity = rb.velocity * 0.95f;
 	}
 
 	void OnTriggerEnter (Collider other) {
