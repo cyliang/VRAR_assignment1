@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
@@ -11,26 +12,21 @@ public class PlayerScript : MonoBehaviour {
 	public Text scoreText, resultText;
 	public AudioClip[] scoreClips;
 	public GameObject scoreEffect;
-	public AudioClip winSound, loseSound;
+	public AudioClip[] footSound;
+	public float footVolume;
 
 	Rigidbody rb;
 	int score;
-	bool gameOver;
 
 	void Start () {
 		rb = GetComponent<Rigidbody> ();
 		score = 0;
 		updateScore ();
-		gameOver = false;
 	}
 
 	void Update() {
-		if (transform.position.y < -10 && !gameOver) {
-			resultText.text = "Game Over!!!!";
-			resultText.color = Color.blue;
-			resultText.gameObject.SetActive (true);
-			AudioSource.PlayClipAtPoint (loseSound, transform.position);
-			gameOver = true;
+		if (transform.position.y < -10) {
+			GameModel.lose ();
 		}
 	}
 	
@@ -52,25 +48,26 @@ public class PlayerScript : MonoBehaviour {
 		if (other.gameObject.CompareTag ("Treasure")) {
 			other.gameObject.transform.parent.gameObject.SetActive (false);
 
-			AudioSource.PlayClipAtPoint(scoreClips[Random.Range(0, scoreClips.Length)], transform.position);
+			AudioSource.PlayClipAtPoint (scoreClips [Random.Range (0, scoreClips.Length)], transform.position);
 			Instantiate (scoreEffect, other.transform.position, Quaternion.identity);
 
 			score++;
 			updateScore ();
 
 			if (score == 10)
-				win ();
+				GameModel.win ();
+		}
+	}
+
+	void OnCollisionEnter (Collision collision) {
+		if (collision.collider.gameObject.CompareTag ("Ground")) {
+			AudioSource.PlayClipAtPoint (footSound [Random.Range (0, footSound.Length)], 
+				collision.contacts[0].point, 
+				10f * collision.relativeVelocity.magnitude);
 		}
 	}
 
 	void updateScore() {
 		scoreText.text = "Score: " + score.ToString ();
-	}
-
-	void win() {
-		resultText.text = "You Win!!!";
-		resultText.color = Color.yellow;
-		resultText.gameObject.SetActive (true);
-		AudioSource.PlayClipAtPoint (winSound, transform.position);
 	}
 }
